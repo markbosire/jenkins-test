@@ -1,5 +1,10 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'docker:dind'
+            args '--privileged'
+        }
+    }
 
     environment {
         IMAGE_NAME = "python-flask-app"
