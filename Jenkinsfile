@@ -1,12 +1,4 @@
 pipeline {
-    agent { 
-        node {
-            label 'jenkins-agent-dind'
-            }
-      }
-    triggers {
-        pollSCM '* * * * *'
-    }
     environment {
         IMAGE_NAME = "python-flask-app"
     }
