@@ -10,11 +10,13 @@ pipeline {
                 script {
                     // Completely disable Docker TLS and use plain text connection
                     withEnv([
-                        'DOCKER_TLS_VERIFY=',
+                        'DOCKER_TLS_VERIFY=0',
                         'DOCKER_HOST=tcp://localhost:2375',
                         'DOCKER_CERT_PATH='
                     ]) {
                         sh '''
+                            printenv | grep CERT
+                            docker info
                             docker --debug build -t ${IMAGE_NAME} .
                         '''
                     }
