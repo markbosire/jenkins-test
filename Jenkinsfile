@@ -10,9 +10,7 @@ pipeline {
                 script {
                     
                         sh '''
-                            export DOCKER_TLS_VERIFY=0
-                            export DOCKER_HOST=tcp://localhost:2375
-                            unset DOCKER_CERT_PATH
+                            printenv
                             docker --debug build -t ${IMAGE_NAME} .
                         '''
                     
