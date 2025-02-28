@@ -8,7 +8,8 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                withEnv(['DOCKER_TLS_VERIFY=0']){
+                // Disable TLS verification and clear certificate path
+                withEnv(['DOCKER_TLS_VERIFY=0', 'DOCKER_CERT_PATH=']) {
                     sh 'docker build -t ${IMAGE_NAME} .'
                 }
             }
