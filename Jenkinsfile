@@ -8,18 +8,16 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Completely disable Docker TLS and use plain text connection
-                    withEnv([
-                        'DOCKER_TLS_VERIFY=0',
-                        'DOCKER_HOST=tcp://localhost:2375',
-                        'DOCKER_CERT_PATH='
-                    ]) {
+                    
                         sh '''
+                            export DOCKER_TLS_VERIFY=0,
+                            export DOCKER_HOST=tcp://localhost:2375,
+                            unset DOCKER_CERT_PATH'
                             printenv | grep TLS
                             docker info
                             docker --debug build -t ${IMAGE_NAME} .
                         '''
-                    }
+                    
                 }
             }
         }
