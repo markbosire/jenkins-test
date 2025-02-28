@@ -1,5 +1,6 @@
 pipeline {
     agent any
+
     environment {
         IMAGE_NAME = "python-flask-app"
     }
@@ -7,7 +8,9 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t ${IMAGE_NAME} .'
+                withEnv(['DOCKER_TLS_VERIFY=0']){
+                    sh 'docker build -t ${IMAGE_NAME} .'
+                }
             }
         }
         stage('Run Container') {
