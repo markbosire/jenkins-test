@@ -15,7 +15,7 @@ pipeline {
                         'DOCKER_CERT_PATH='
                     ]) {
                         sh '''
-                            printenv | grep CERT
+                            printenv | grep TLS
                             docker info
                             docker --debug build -t ${IMAGE_NAME} .
                         '''
