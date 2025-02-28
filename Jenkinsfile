@@ -10,7 +10,6 @@ pipeline {
                 script {
                     
                         sh '''
-                            printenv
                             docker --debug build -t ${IMAGE_NAME} .
                         '''
                     
