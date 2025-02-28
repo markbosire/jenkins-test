@@ -16,12 +16,13 @@ pipeline {
         stage('Run Container') {
             steps {
                 bat '''
-                    docker stop %IMAGE_NAME% || exit 0
-                    docker rm %IMAGE_NAME% || exit 0
+                    docker ps -q --filter "name=%IMAGE_NAME%" | findstr . >nul && docker stop %IMAGE_NAME%
+                    docker ps -a -q --filter "name=%IMAGE_NAME%" | findstr . >nul && docker rm %IMAGE_NAME%
                     docker run -d -p 5000:5000 --name %IMAGE_NAME% %IMAGE_NAME%
                 '''
             }
         }
+    }
     }
 
     post {
