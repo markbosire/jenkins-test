@@ -1,5 +1,7 @@
 pipeline { 
-    agent any
+    agent {
+        label 'jenkins-slave-dind'  // Use the specified Docker Jenkins slave
+    }
 
     environment {
         IMAGE_NAME = "python-flask-app"
