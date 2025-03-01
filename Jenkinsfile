@@ -9,6 +9,7 @@ pipeline {
 
     stages {
         stage('Checkout') {
+                agent { label '!built-in' }
                 steps {
                     checkout scm
                 }
