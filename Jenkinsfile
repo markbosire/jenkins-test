@@ -1,8 +1,5 @@
 pipeline { 
-    agent {
-        label 'jenkins-slave-dind'  // Use the specified Docker Jenkins slave
-    }
-
+    agent none
     environment {
         IMAGE_NAME = "python-flask-app"
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials')  // Use your credentials ID here
@@ -11,6 +8,12 @@ pipeline {
     }
 
     stages {
+        stage('Checkout') {
+                agent { label 'jenkins-slave-dind' }
+                steps {
+                    checkout scm
+                }
+            }
         stage('Build Docker Image') {
             agent {
                 label 'jenkins-slave-dind'
@@ -37,7 +40,7 @@ pipeline {
         
         stage('Run Container') {
             // This stage doesn't use the Docker slave as requested
-            agent any
+            agent none
             steps {
                 bat '''
                     docker ps -q --filter "name=%IMAGE_NAME%" | findstr . >nul && docker stop %IMAGE_NAME%
