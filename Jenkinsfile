@@ -9,7 +9,7 @@ pipeline {
 
     stages {
         stage('Checkout') {
-                agent { label 'jenkins-slave-dind' }
+                agent none
                 steps {
                     checkout scm
                 }
