@@ -1,5 +1,5 @@
 pipeline { 
-    agent none
+    agent { label 'master' }
     environment {
         IMAGE_NAME = "python-flask-app"
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials')  // Use your credentials ID here
@@ -9,7 +9,6 @@ pipeline {
 
     stages {
         stage('Checkout') {
-                agent none
                 steps {
                     checkout scm
                 }
@@ -40,7 +39,7 @@ pipeline {
         
         stage('Run Container') {
             // This stage doesn't use the Docker slave as requested
-            agent none
+            agent { label 'master' }
             steps {
                 bat '''
                     docker ps -q --filter "name=%IMAGE_NAME%" | findstr . >nul && docker stop %IMAGE_NAME%
