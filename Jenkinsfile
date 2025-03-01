@@ -1,5 +1,5 @@
 pipeline { 
-    agent { label '!built-in' }
+    agent any
     environment {
         IMAGE_NAME = "python-flask-app"
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials')  // Use your credentials ID here
@@ -9,15 +9,13 @@ pipeline {
 
     stages {
         stage('Checkout') {
-                agent { label '!built-in' }
+               
                 steps {
                     checkout scm
                 }
             }
         stage('Build Docker Image') {
-            agent {
-                label 'jenkins-slave-dind'
-            }
+           
             steps {
                 sh '''
                     docker build -t ${DOCKERHUB_REPO}:latest .
@@ -45,7 +43,8 @@ pipeline {
                 bat '''
                     docker ps -q --filter "name=%IMAGE_NAME%" | findstr . >nul && docker stop %IMAGE_NAME%
                     docker ps -a -q --filter "name=%IMAGE_NAME%" | findstr . >nul && docker rm %IMAGE_NAME%
-                    docker run -d -p 5000:5000 --name %IMAGE_NAME% %IMAGE_NAME%
+                    docker pull %DOCKERHUB_USERNAME%/%IMAGE_NAME%:latest
+                    docker run -d -p 5000:5000 --name %IMAGE_NAME% %DOCKERHUB_USERNAME%/%IMAGE_NAME%:latest
                 '''
             }
         }
