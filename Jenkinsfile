@@ -9,6 +9,9 @@ pipeline {
 
     stages {
         stage('Build Docker Image') {
+            agent {
+                label 'jenkins-slave-dind'
+            }
             steps {
                 sh """
                     docker build -t ${DOCKERHUB_REPO}:latest .
@@ -17,6 +20,9 @@ pipeline {
         }
         
         stage('Push to DockerHub') {
+            agent {
+                label 'jenkins-slave-dind'
+            }
             steps {
                 sh """
                     echo ${DOCKERHUB_CREDENTIALS_PSW} | docker login -u ${DOCKERHUB_CREDENTIALS_USR} --password-stdin
