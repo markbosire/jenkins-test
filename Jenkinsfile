@@ -3,21 +3,15 @@ pipeline {
     environment {
         IMAGE_NAME = "python-flask-app"
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials')  // Use your credentials ID here
-        DOCKERHUB_USERNAME = "%DOCKERHUB_CREDENTIALS_USR%"
-        DOCKERHUB_REPO = "%DOCKERHUB_USERNAME%/%IMAGE_NAME%"
+        DOCKERHUB_USERNAME = "${DOCKERHUB_CREDENTIALS_USR}"
+        DOCKERHUB_REPO = "${DOCKERHUB_USERNAME}/${IMAGE_NAME}"
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
                 bat """
-                    docker build -t %DOCKERHUB_REPO%:latest .
+                    docker build -t ${DOCKERHUB_REPO}:latest .
                 """
             }
         }
@@ -25,8 +19,8 @@ pipeline {
         stage('Push to DockerHub') {
             steps {
                 bat """
-                    echo %DOCKERHUB_CREDENTIALS_PSW% | docker login -u %DOCKERHUB_CREDENTIALS_USR% --password-stdin
-                    docker push %DOCKERHUB_REPO%:latest
+                    echo ${DOCKERHUB_CREDENTIALS_PSW} | docker login -u ${DOCKERHUB_CREDENTIALS_USR} --password-stdin
+                    docker push ${DOCKERHUB_REPO}:latest
                     docker logout
                 """
             }
@@ -35,10 +29,10 @@ pipeline {
         stage('Run Container') {
             steps {
                 bat """
-                    for /f "tokens=*" %%i in ('docker ps -q --filter "name=%IMAGE_NAME%"') do docker stop %%i
-                    for /f "tokens=*" %%i in ('docker ps -a -q --filter "name=%IMAGE_NAME%"') do docker rm %%i
-                    docker pull %DOCKERHUB_USERNAME%/%IMAGE_NAME%:latest
-                    docker run -d -p 5000:5000 --name %IMAGE_NAME% %DOCKERHUB_USERNAME%/%IMAGE_NAME%:latest
+                    for /f "tokens=*" %%i in ('docker ps -q --filter "name=${IMAGE_NAME}"') do docker stop %%i
+                    for /f "tokens=*" %%i in ('docker ps -a -q --filter "name=${IMAGE_NAME}"') do docker rm %%i
+                    docker pull ${DOCKERHUB_REPO}:latest
+                    docker run -d -p 5000:5000 --name ${IMAGE_NAME} ${DOCKERHUB_REPO}:latest
                 """
             }
         }
