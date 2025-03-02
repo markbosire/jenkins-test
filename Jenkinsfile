@@ -29,8 +29,13 @@ pipeline {
         stage('Run Container') {
             steps {
                 sh """
-                    for /f "tokens=*" %%i in ('docker ps -q --filter "name=${IMAGE_NAME}"') do docker stop %%i
-                    for /f "tokens=*" %%i in ('docker ps -a -q --filter "name=${IMAGE_NAME}"') do docker rm %%i
+                   for container in $(docker ps -q --filter "name=${IMAGE_NAME}"); do
+                        docker stop "$container"
+                    done
+
+                    for container in $(docker ps -a -q --filter "name=${IMAGE_NAME}"); do
+                        docker rm "$container"
+                    done
                     docker pull ${DOCKERHUB_REPO}:latest
                     docker run -d -p 5000:5000 --name ${IMAGE_NAME} ${DOCKERHUB_REPO}:latest
                 """
