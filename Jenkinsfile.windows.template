@@ -10,7 +10,7 @@ pipeline {
     stages {
         stage('Build Docker Image') {
             steps {
-                sh """
+                bat """
                     docker build -t ${DOCKERHUB_REPO}:latest .
                 """
             }
@@ -18,7 +18,7 @@ pipeline {
         
         stage('Push to DockerHub') {
             steps {
-                sh """
+                bat """
                     echo ${DOCKERHUB_CREDENTIALS_PSW} | docker login -u ${DOCKERHUB_CREDENTIALS_USR} --password-stdin
                     docker push ${DOCKERHUB_REPO}:latest
                     docker logout
@@ -28,7 +28,7 @@ pipeline {
         
         stage('Run Container') {
             steps {
-                sh """
+                bat """
                     for /f "tokens=*" %%i in ('docker ps -q --filter "name=${IMAGE_NAME}"') do docker stop %%i
                     for /f "tokens=*" %%i in ('docker ps -a -q --filter "name=${IMAGE_NAME}"') do docker rm %%i
                     docker pull ${DOCKERHUB_REPO}:latest
